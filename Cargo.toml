@@ -13,5 +13,3 @@ panic = "abort"
 [[bin]]
 name = "kernel"
 path = "src/kernel.rs"
-bench = false
-test = false

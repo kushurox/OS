@@ -22,10 +22,7 @@ pub extern "C" fn kmain() -> ! {
 
     unsafe {
         disp.clrscr();
-        disp.print("kruthart is so cool he made \ncome into reality");
-        // write(temp.offset(160), 0x61);
-        
-        // write(temp.offset(161), 0x1F);
+        disp.print("Paging setup\nGDT Setup\nKernel Running!\nReally Cool!");
 
     }
 

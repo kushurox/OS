@@ -11,10 +11,5 @@
     "linker": "rust-lld",
     "panic-strategy": "abort",
     "disable-redzone": true,
-    "features": "-mmx,-sse,+soft-float",
-    "pre-link-args": {
-        "ld.lld": [
-            "--entry=kmain"
-        ]
-    }
+    "features": "-mmx,-sse,+soft-float"
 }

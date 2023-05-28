@@ -18,7 +18,7 @@ impl display{
                 continue;
             }
             write_unaligned(self.vga_buffer.offset(self.offset), b);
-            write_unaligned(self.vga_buffer.offset(self.offset+1), 0x1F);
+            write_unaligned(self.vga_buffer.offset(self.offset+1), 0x0A);
             self.offset += 2; 
         }
     }
@@ -26,29 +26,9 @@ impl display{
         self.offset = 0;
         for _ in 0..80*25{
             write_volatile(self.vga_buffer.offset(self.offset), 0);
-            write_volatile(self.vga_buffer.offset(self.offset + 1), 0x1F);
+            write_volatile(self.vga_buffer.offset(self.offset + 1), 0x0A);
             self.offset += 2;
         }
         self.offset = 0;
     }
 }
-
-// pub unsafe fn print(text: &str){
-//     let vga_buffer = 0xb8000 as *mut u8;
-//     let mut offset = 0;
-//     for b in text.bytes(){
-//         write(vga_buffer.offset(offset), b);
-//         write(vga_buffer.offset(offset + 1), 0x1F);
-//         offset += 2;
-//     }
-// }
-
-// pub unsafe fn clrscr(){
-//     let vga_buffer = 0xb8000 as *mut u8;
-//     let mut offset = 0;
-//     for _ in 0..80*25{
-//         write(vga_buffer.offset(offset), 0);
-//         write(vga_buffer.offset(offset + 1), 0x1F);
-//         offset += 2;
-//     }
-// }
