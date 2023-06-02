@@ -3,6 +3,7 @@ name = "ordinal_system"
 version = "0.1.0"
 
 [dependencies]
+"x86_64" = "0.14.10"
 
 [profile.dev]
 panic = "abort"
@@ -10,6 +11,6 @@ panic = "abort"
 [profile.release]
 panic = "abort"
 
-[[bin]]
-name = "kernel"
-path = "src/kernel.rs"
+[lib]
+crate-type = ["staticlib"]
+path="src/kernel.rs"

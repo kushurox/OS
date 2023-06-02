@@ -1,16 +1,26 @@
 #![no_std]
 #![no_main]
 
-use core::{panic::PanicInfo, ptr::write};
+#![feature(panic_info_message)]
+
+extern crate x86_64;
+
+use core::{panic::PanicInfo};
 use io::display;
 
-// extern crate alloc;
 mod io;
 // mod mem;
 
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
+    let mut stderr = display::new();
+    stderr.color_scheme = 0x0C;
+    unsafe {
+        stderr.clrscr();
+        // stderr.print("You Paniced!");
+
+    }
     loop {}
 }
 
@@ -18,12 +28,14 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
     let mut disp = display::new();
-    let temp = 0xb8000 as *mut u8;
 
+    // panic!("Ahh!!");
     unsafe {
         disp.clrscr();
-        disp.print("Paging setup\nGDT Setup\nKernel Running!\nReally Cool!");
+        disp.print("AAAAAAAA\n");
+        disp.print("AAAAAasjdiajsidajsidjaisjdiajsdiajsidjAAA\n");
 
+        disp.print("Paging setup\nGDT Setup\nKernel Running!\nReally Cool!");
     }
 
     loop {}
