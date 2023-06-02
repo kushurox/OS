@@ -9,9 +9,6 @@ use core::{panic::PanicInfo};
 use io::display;
 
 mod io;
-// mod mem;
-
-
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     let mut stderr = display::new();
