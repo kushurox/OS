@@ -13,7 +13,7 @@ main:
 
 load_kernel:
     mov ah, 0x02 ; read sectors
-    mov al, 0xFF ; sector count
+    mov al, 0x5 ; sector count
     mov cl, 0x02 ; sector start, 0x01 is boot sector
     mov ch, 0x00 ; cylinder start
     mov dh, 0x00 ; head start
