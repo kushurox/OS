@@ -28,7 +28,7 @@ pub extern "C" fn kmain() -> ! {
     unsafe {
         disp.clrscr();
         disp.print("AAAAAAAA\n");
-
+        disp.print("This is a very long string which causes the program to crash unfortunately!, fret not let's fix this!");
         disp.print("Paging setup\nGDT Setup\nKernel Running!\nReally Cool!");
     }
 
