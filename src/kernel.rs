@@ -13,22 +13,24 @@ mod io;
 fn panic(_info: &PanicInfo) -> ! {
     let mut stderr = display::new();
     stderr.color_scheme = 0x0C;
+    let msg = _info.message().unwrap().as_str().unwrap();
     unsafe {
         stderr.clrscr();
-
+        stderr.print("Panic :(")
     }
     loop {}
+}
+
+fn load_kernel(){
+    
 }
 
 
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
     let mut disp = display::new();
-
     unsafe {
         disp.clrscr();
-        disp.print("AAAAAAAA\n");
-        disp.print("This is a very long string which causes the program to crash unfortunately!, fret not let's fix this!");
         disp.print("Paging setup\nGDT Setup\nKernel Running!\nReally Cool!");
     }
 

@@ -14,4 +14,10 @@ SECTIONS {
         os/libordinal_system.a(.text.kmain)
     } > os
 
+    .data :
+    {
+        os/libordinal_system.a(.data.*)
+        os/libordinal_system.a(.rodata.*)
+    } > os
+
 }

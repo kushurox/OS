@@ -18,7 +18,7 @@ SwitchToLongMode:
     rep stosd ; fill the memory with 0
 
 
-mov di, 0x8000 ; setting di to 32kb, this is where we will be setting up the page tables
+mov di, 0x100000 ; setting di to 1MB, this is where the PML4 will be stored
 push di
 
 
