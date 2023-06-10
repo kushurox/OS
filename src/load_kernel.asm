@@ -1,4 +1,11 @@
 ; loading 1 MB kernel from disk
+
+read_disk_param:
+    mov ah, 0x08 ; get disk parameters
+    mov dl, 0x80 ; drive number
+    int 0x13
+    ; last logical head number is 15
+
 load_kernel:
     mov ah, 0x02 ; read disk
     mov al, 128 ; number of sectors to read
@@ -17,7 +24,6 @@ load_kernel:
 
 
 load_heads:
-    cmp dh, 0xFF
     mov ah, 0x02 ; read disk
     mov al, 128 ; number of sectors to read
     mov dl, 0x80 ; drive number
@@ -25,6 +31,7 @@ load_heads:
     int 0x13
     inc dh
     add bx, 0x2000 ; 64 KB
-    je load_done
-load_done_c:
+    cmp dh, 0xf ; 15 heads
+    jne load_heads
+load_done:
 
