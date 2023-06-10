@@ -15,6 +15,7 @@ load_kernel:
     mov cl, 0x02 ; sector number
     mov bx, 0x7e00 ; load at 0x7e00
     int 0x13
+    ; making the code unreachable for now.
     ; this will load upto 0x7c00 + 64KB = 0x17c00
     ; loading consecutive sectors, each head can load upto 128 sectors which is 64 KB
     ; we need to load 1 MB, so we need 16 heads but we already loaded 1 sector hence 15 heads

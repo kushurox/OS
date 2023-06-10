@@ -22,7 +22,6 @@ jmp SwitchToLongMode
 lgdt [GDT_ADDR]
 jmp 0x08:LongMode
 %include "src/gdt.asm"
-%include "src/print.asm"
 
 ALIGN 4
 IDT:
@@ -37,7 +36,7 @@ LongMode:
     mov fs, ax
     mov gs, ax
     mov ss, ax
+
     extern kmain
     call kmain
     ; jmp 0x7e00
-
