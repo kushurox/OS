@@ -13,6 +13,7 @@ mod io;
 fn panic(_info: &PanicInfo) -> ! {
     let mut stderr = display::new();
     stderr.color_scheme = 0x0C;
+    let msg = _info.message().unwrap().as_str().unwrap();
     unsafe {
         stderr.clrscr();
         stderr.print("Panic :(")
