@@ -1,4 +1,4 @@
-use core::{ptr::{write_volatile}, convert::TryInto};
+use core::{ptr::{write_volatile, read_volatile}, convert::TryInto};
 
 
 
@@ -33,18 +33,39 @@ impl display{
         }
         self.offset = 0;
     }
+    pub unsafe fn printBytes(&mut self, bytes: [u8; 16]) {
+        for b in bytes {
+            write_volatile(self.vga_buffer.offset(self.offset), b);
+            write_volatile(self.vga_buffer.offset(self.offset+1), self.color_scheme);
+            self.offset += 2;
+        }
+    }
 }
 
 impl display {
-    pub fn printHex(n: u64){
+    pub unsafe fn print_hex(&mut self, mut n: u64){
+        let tmp = self.color_scheme;
+        self.color_scheme = 0x0E;
         let mut hexits = [0u8; 16];
-        let mut c = 0;
-        while n!=0 {
+        for c in (0..16).rev() {
             let r: u8 = (n%16).try_into().unwrap();
-            if r>9 {
-                hexits[c] = ('F' as u8) - (15-r);
+            n = n.div_floor(16);
+            if r > 9 {
+                hexits[c] = 5 - (15 - r) + 65; // 'A' + (5 - 'F' - r)
+            }
+            else{
+                hexits[c] = r + 48;
             }
         }
+        self.print("0x");
+        self.printBytes(hexits);
+        self.color_scheme = tmp;
+    }
 
+    pub fn read_memory(&mut self, addr: *const u64) {
+        unsafe {
+            let val = read_volatile(addr);
+            self.print_hex(val);
+        }
     }
 }

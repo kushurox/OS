@@ -39,4 +39,3 @@ LongMode:
 
     extern kmain
     call kmain
-    ; jmp 0x7e00
