@@ -8,15 +8,14 @@ read_disk_param:
 
 load_kernel:
     mov ah, 0x02 ; read disk
-    mov al, 128 ; number of sectors to read
+    mov al, 10 ; number of sectors to read
     mov dh, 0x00 ; head number
     mov dl, 0x80 ; drive number
     mov ch, 0x00 ; cylinder number
     mov cl, 0x02 ; sector number
     mov bx, 0x7e00 ; load at 0x7e00
     int 0x13
-    ; this loads 128 sectors (64 KB) at 0x7e00
-    ; 512 * 128 = 65536 = 64 KB
-    ; loads upto 0x7e00 + 0x10000 = 0x17e00
+    ; 512 * 10 = 5120 bytes
+    ; loads upto 0x7e00 + 5120 = 0x9200
 load_done:
 

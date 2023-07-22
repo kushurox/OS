@@ -3,7 +3,7 @@ name = "ordinal_system"
 version = "0.1.0"
 
 [dependencies]
-"x86_64" = "0.14.10"
+# "x86_64" = "0.14.10"
 
 [profile.dev]
 panic = "abort"

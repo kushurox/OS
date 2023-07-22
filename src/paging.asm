@@ -4,21 +4,21 @@
 ; https://wiki.osdev.org/Setting_Up_Paging
 
 
-; es:di must point to a page aligned memory location (16KB aligned)
-
 %define PAGE_PRESENT (1 << 0)
 %define PAGE_WRITE (1 << 1)
 ; from this we can infer that the last 2 bits are to tell if page is present and if it is writable
- 
+
 
 SwitchToLongMode:
-    mov ecx, 0x1000 ; counter register, rep keeps running until ecx becomes 0, hence it runs 4096 times here
-    xor eax, eax ; stosd copy's the content of eax to the memory pointed by edi, hence it fills the memory with 0
+    mov di, 0x1000
+    mov cx, 4096 ; counter register, rep keeps running until ecx becomes 0, hence it runs 4096 times here
+    xor ax, ax ; stosd copy's the content of eax to the memory pointed by edi, hence it fills the memory with 0
     cld ; clear direction flag, so that the memory is filled from low to high
     rep stosd ; fill the memory with 0
 
 
-mov di, 0x100000 ; setting di to 1MB, this is where the PML4 will be stored
+
+mov di, 0x1000 ; setting di to 0x1000, this is where the PML4 will be stored
 push di
 
 

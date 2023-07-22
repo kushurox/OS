@@ -1,4 +1,4 @@
-use core::{ptr::{write_volatile, read_volatile}, convert::TryInto};
+use core::{ptr::write_volatile, convert::TryInto};
 
 
 
@@ -33,7 +33,7 @@ impl display{
         }
         self.offset = 0;
     }
-    pub unsafe fn printBytes(&mut self, bytes: [u8; 16]) {
+    pub unsafe fn print_bytes(&mut self, bytes: [u8; 16]) {
         for b in bytes {
             write_volatile(self.vga_buffer.offset(self.offset), b);
             write_volatile(self.vga_buffer.offset(self.offset+1), self.color_scheme);
@@ -58,14 +58,13 @@ impl display {
             }
         }
         self.print("0x");
-        self.printBytes(hexits);
+        self.print_bytes(hexits);
         self.color_scheme = tmp;
     }
-
-    pub fn read_memory(&mut self, addr: *const u64) {
-        unsafe {
-            let val = read_volatile(addr);
-            self.print_hex(val);
-        }
-    }
 }
+
+unsafe impl Sync for display {
+
+}
+
+pub static mut DISP: display = display {vga_buffer: 0xb8000 as *mut u8, offset:0, color_scheme: 0x0A};

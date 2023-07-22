@@ -16,7 +16,7 @@ $(target)/libordinal_system.a: $(src)/*.rs
 	cp target/custom_target/release/libordinal_system.a $(target)/libordinal_system.a
 
 $(target)/boot.bin: linker.ld $(target)/boot.o $(target)/libordinal_system.a
-	ld.lld -T linker.ld $(target)/boot.o $(target)/libordinal_system.a -o $(target)/boot.bin --oformat=binary
+	ld.lld -T linker.ld -o $(target)/boot.bin --oformat=binary
 
 run: all
 	qemu-system-x86_64 -d in_asm -hda $(target)/boot.bin --no-reboot --no-shutdown

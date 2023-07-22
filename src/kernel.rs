@@ -4,35 +4,47 @@
 #![feature(panic_info_message)]
 #![feature(int_roundings)]
 
-extern crate x86_64;
 
-use core::{panic::PanicInfo, arch::asm};
-use io::display;
+use core::{panic::PanicInfo, ptr::read_volatile};
+use io::DISP;
+
+use crate::interrupts::check_apic;
+
 
 mod io;
+mod regs;
+mod interrupts;
+
+pub fn read_memory(addr: *const u64) -> u64 {
+    unsafe {
+        let val = read_volatile(addr);
+        return val;
+    }
+}
+
+
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
-    let mut stderr = display::new();
-    stderr.color_scheme = 0x0C;
     // let msg = _info.message().unwrap().as_str().unwrap(); need a second stage loader to make this work
     unsafe {
-        stderr.clrscr();
-        stderr.print("Panic :(")
+        DISP.color_scheme = 0x0C;
+        DISP.clrscr();
+        DISP.print("Panic :(")
     }
     loop {}
 }
-
 
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
-    let mut disp = display::new();
-    let rip: u64;
+    check_apic();
     unsafe {
-        disp.clrscr();
-        disp.print("Paging setup\nGDT Setup\nKernel Running!\nRIP:");
-        asm!("lea {rip}, [rip]", rip=out(reg) rip);
-        disp.print_hex(rip);
+        DISP.clrscr();
+        DISP.print("Paging setup\nGDT Setup\nKernel Running!\nRIP:");
+        write_reg!("eax", 0x69);
+        let rip = read_reg!("eax");
+        DISP.print_hex(rip);
     }
 
     loop {}
 }
+
