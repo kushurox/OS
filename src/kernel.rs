@@ -8,7 +8,7 @@
 use core::{panic::PanicInfo, ptr::read_volatile};
 use io::DISP;
 
-use crate::interrupts::check_apic;
+use crate::interrupts::{check_apic, get_msr_val};
 
 
 mod io;
@@ -39,10 +39,8 @@ pub extern "C" fn kmain() -> ! {
     check_apic();
     unsafe {
         DISP.clrscr();
-        DISP.print("Paging setup\nGDT Setup\nKernel Running!\nRIP:");
-        write_reg!("eax", 0x69);
-        let rip = read_reg!("eax");
-        DISP.print_hex(rip);
+        let msr_result = get_msr_val(0x1B);
+        
     }
 
     loop {}

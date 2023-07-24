@@ -1,3 +1,10 @@
+const PML4_BASE: u64 = 0x1000;
+const PML3_BASE: u64 = PML4_BASE + 0x1000;
+const PML2_BASE: u64 = PML4_BASE + 0x2000;
+const PML1_BASE: i64 = PML4_BASE + 0x3000;
+
+
+
 pub struct Entry{
     data: u64
 }
