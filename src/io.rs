@@ -67,4 +67,12 @@ unsafe impl Sync for display {
 
 }
 
+#[macro_export]
+macro_rules! print {
+    ($($x:expr),+) => {
+        $(DISP.print($x);)+
+    };
+}
+
 pub static mut DISP: display = display {vga_buffer: 0xb8000 as *mut u8, offset:0, color_scheme: 0x0A};
+

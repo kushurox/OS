@@ -7,6 +7,7 @@
 
 use core::{panic::PanicInfo, ptr::read_volatile};
 use io::DISP;
+use paging::Mapper;
 
 use crate::interrupts::{check_apic, get_msr_val};
 
@@ -14,13 +15,7 @@ use crate::interrupts::{check_apic, get_msr_val};
 mod io;
 mod regs;
 mod interrupts;
-
-pub fn read_memory(addr: *const u64) -> u64 {
-    unsafe {
-        let val = read_volatile(addr);
-        return val;
-    }
-}
+mod paging;
 
 
 #[panic_handler]
@@ -36,11 +31,15 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
+    let mut pm = Mapper::init();
     check_apic();
     unsafe {
         DISP.clrscr();
-        let msr_result = get_msr_val(0x1B);
-        
+        let apic_base = get_msr_val(0x1B);
+        print!("Apic present!\n", "MSR: ");
+        DISP.print_hex(apic_base);
+        print!("\n");
+        pm.info_table();
     }
 
     loop {}

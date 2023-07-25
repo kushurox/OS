@@ -11,10 +11,10 @@ pub unsafe fn get_msr_val(ecx: u32) -> u64{
     asm!("rdmsr");
     asm!("mov {}, rdx", out(reg) hi);
     asm!("mov {}, rax", out(reg) lo);
-    DISP.print("DEBUG:\n");
-    DISP.print_hex(hi);
-    DISP.print("\n");
-    DISP.print_hex(lo);
+    // DISP.print("DEBUG:\n");
+    // DISP.print_hex(hi);
+    // DISP.print("\n");
+    // DISP.print_hex(lo);
     return (hi << 32) | lo;
 }
 
