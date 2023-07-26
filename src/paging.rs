@@ -1,18 +1,46 @@
 use core::{ptr::read_volatile, convert::TryInto};
+use io::DISP;
 
-use crate::{print, io::DISP};
+use crate::print;
 
 const PML4_BASE: u64 = 0x1000;              // from paging.asm, we know pml4 base is 0x1000
 
+pub enum AddressType {
+    VirtualAddress(VirtualAddress),
+    PhysicalAddress(*const u64),
+}
+
+pub struct VirtualAddress{
+    pub pml4_index: usize,
+    pub pml3_index: usize,
+    pub pml2_index: usize,
+    pub pml1_index: usize,
+    pub page_offset: usize
+}
+
+impl VirtualAddress {
+    pub fn new(addr: u64) -> Self{
+        let virt: usize = addr.try_into().unwrap();
+        VirtualAddress { 
+            pml4_index: virt >> 39,
+            pml3_index: (virt >> 30) & 0b111111111,
+            pml2_index: (virt >> 21) & 0b111111111,
+            pml1_index: (virt >> 12) & 0b111111111,
+            page_offset: virt & 0xFFF
+        }
+    }
+}
+
+
 pub struct Mapper {
-    pub pml4_addr: *mut u64,
+    pub pml4_addr: *const u64,
 }
 
 impl Mapper{
     pub fn default() -> Self{
         // uses default addresses for tables (from paging.asm)
         Mapper {
-            pml4_addr: PML4_BASE as *mut u64
+            pml4_addr: PML4_BASE as *const u64
         }
     }
 
@@ -21,23 +49,39 @@ impl Mapper{
         todo!()
     }
 
-
-    fn map_address(&mut self, phy: *const u64, virt: *const u64){
+    pub fn map_v_p(&self, virt_addr: AddressType, phy_addr: AddressType){
+        // limiting mapping upto 8GB only.
+        // maps virtual address to given physical address
+        // not doing checks for shared memory, let the caller decide upon that
+        if let (AddressType::VirtualAddress(vaddr), AddressType::PhysicalAddress(paddr)) = (virt_addr, phy_addr) {
+            unsafe {
+                
+            }
+        } else {
+            panic!() // attempting to map incorrect types of addresses
+        }
         todo!()
     }
 
-    pub fn resolve(&self, virt: u64) -> u64 {
-        let i4 = virt >> 39;
-        let i3 = (virt >> 30) & 0b111111111;
-        let i2 = (virt >> 21) & 0b111111111;
-        let i1 = (virt >> 12) & 0b111111111;
-        let page_offset = virt & 0xFFF;
+    pub fn resolve(&self, virtual_address: AddressType) -> AddressType{
+        unsafe{
 
-        unsafe {
-            let l3_address = read_volatile(self.pml4_addr.wrapping_add(i4.try_into().unwrap()));
+            if let AddressType::VirtualAddress(addr) = virtual_address {
+                if self.pml4_addr.is_null() { print!("l4 panic"); loop {}; } // change this once panic handler has been fixed
+                let p3_address = (self.pml4_addr.wrapping_add(addr.pml4_index).read() & 0xFFFFFFFFFFFFF000) as *const u64;
+                if p3_address.is_null() { print!("l3 panic"); loop {}; }
+                let p2_address = (p3_address.wrapping_add(addr.pml3_index).read() & 0xFFFFFFFFFFFFF000) as *const u64;
+                if p2_address.is_null() { print!("l2 panic"); loop {}; }
+                let p1_address = (p2_address.wrapping_add(addr.pml2_index).read() & 0xFFFFFFFFFFFFF000) as *const u64;
+                if p1_address.is_null() { print!("l1 panic"); loop {}; }
+                let page_address = (p1_address.wrapping_add(addr.pml1_index).read() & 0xFFFFFFFFFFFFF000) as *const u64;
+                return AddressType::PhysicalAddress((page_address as *const u8).wrapping_add(addr.page_offset) as *const u64);
+            } else {
+                panic!("Attempt to resolve physical address");
+            }
         }
-        4
     }
+
 }
 
 // virt addr: | unused bits | 9 bits | 9 bits | 9 bits | 9 bits | 12 bits |
@@ -47,3 +91,8 @@ impl Mapper{
 // each l3 entry can map upto 1 * 512 * 512 * 4kb = 1 GB or 0x100000 kilobytes
 // each l2 entry can map upto 1 * 512 * 4 = 2048 kilobytes or 2 MB
 // each l1 entry can map upto 4 kilobytes
+
+
+// spec:
+// will allow virt mapping upto 8GB ram
+// eight l3 entries are enough

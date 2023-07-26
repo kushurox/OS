@@ -5,9 +5,9 @@
 #![feature(int_roundings)]
 
 
-use core::panic::PanicInfo;
+use core::{panic::PanicInfo, ptr::{null, read_volatile}};
 use io::DISP;
-use paging::Mapper;
+use paging::{Mapper, VirtualAddress, AddressType::{VirtualAddress as VA_t, PhysicalAddress as PA_t}};
 
 use crate::interrupts::{check_apic, get_msr_val};
 
@@ -23,8 +23,8 @@ fn panic(_info: &PanicInfo) -> ! {
     // let msg = _info.message().unwrap().as_str().unwrap(); need a second stage loader to make this work
     unsafe {
         DISP.color_scheme = 0x0C;
-        DISP.clrscr();
-        DISP.print("Panic :(")
+        // DISP.clrscr();
+        DISP.print("\nPanic :(")
     }
     loop {}
 }
@@ -35,11 +35,11 @@ pub extern "C" fn kmain() -> ! {
     check_apic();
     unsafe {
         DISP.clrscr();
-        let apic_base = get_msr_val(0x1B);
-        print!("Apic present!\n", "MSR: ");
-        DISP.print_hex(apic_base);
-        print!("\n");
-        pm.info_table();
+        // DISP.print_hex(read_volatile(0x1000 as *const u64));print!("\n");
+        if let PA_t(addr) = pm.resolve(VA_t(VirtualAddress::new(0xFF7c00))){
+            DISP.print_hex(addr as u64);
+        }
+
     }
 
     loop {}
