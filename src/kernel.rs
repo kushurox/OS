@@ -5,7 +5,7 @@
 #![feature(int_roundings)]
 
 
-use core::{panic::PanicInfo, ptr::read_volatile};
+use core::panic::PanicInfo;
 use io::DISP;
 use paging::Mapper;
 
@@ -31,7 +31,7 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
-    let mut pm = Mapper::init();
+    let pm = Mapper::default();
     check_apic();
     unsafe {
         DISP.clrscr();
