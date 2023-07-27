@@ -29,6 +29,11 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
+pub fn temp_panic(msg: &'static str) -> !{ // second stage loader needed for actual panic, hence using this
+    unsafe{print!("Panic occured:", msg);};
+    loop {};
+}
+
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
     let pm = Mapper::default();
@@ -36,7 +41,7 @@ pub extern "C" fn kmain() -> ! {
     unsafe {
         DISP.clrscr();
         // DISP.print_hex(read_volatile(0x1000 as *const u64));print!("\n");
-        if let PA_t(addr) = pm.resolve(VA_t(VirtualAddress::new(0xFF7c00))){
+        if let PA_t(addr) = pm.resolve(VA_t(VirtualAddress::new(0x7c00))){
             DISP.print_hex(addr as u64);
         }
 

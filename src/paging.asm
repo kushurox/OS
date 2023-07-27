@@ -41,7 +41,7 @@ or eax, PAGE_PRESENT | PAGE_WRITE ; setting the present and write bits
 mov DWORD [di + 0x2000], eax ; setting the first entry of the PD to the address of PT
 
 
-; setting up the PT
+; setting up the PT (only for first entry of l2)
 lea di, [di + 0x3000] ; setting di to address of PT (itself)
 mov eax, PAGE_PRESENT | PAGE_WRITE ; setting the present and write bits
 mov ecx, 512 ; counter register, loop keeps running until ecx becomes 0, hence it runs 512 times here
@@ -52,6 +52,11 @@ PTLoop:
     add di, 8 ; incrementing the address by 8 bytes
     add eax, 0x1000 ; incrementing the address by 4kb
     loop PTLoop ; loop until ecx becomes 0
+
+; so far page tables occupy
+; 0x1000 to 0x4000 (excluding upper limit)
+; mapping vaddr 0x0:0x200000 to paddr 0x0:0x200000 (ID mapped) (first 2 MiB)
+; available memory : 0x7c00 - 0x4000 = 0x3c00 bytes
 
 
 ; disabling IRQs
