@@ -1,7 +1,6 @@
 use core::convert::TryInto;
-use io::DISP;
 
-use crate::{print, temp_panic};
+use crate::temp_panic;
 
 const PML4_BASE: u64 = 0x1000;              // from paging.asm, we know pml4 base is 0x1000
 
@@ -63,11 +62,9 @@ impl Mapper{
         // not doing checks for shared memory, let the caller decide upon that
         // NOTE: addresses are forced to be 4 KiB aligned
         if let (AddressType::VirtualAddress(vaddr), AddressType::PhysicalAddress(paddr)) = (virt_addr, phy_addr) {
-            unsafe {
-                if self.pml4_addr.is_null() { temp_panic("Invalid Page Table Address") }
-                if vaddr.pml4_index > 0 || vaddr.pml3_index > 7 { return Err(MapError::OutOfRange); }
+            if self.pml4_addr.is_null() { temp_panic("Invalid Page Table Address") }
+            if vaddr.pml4_index > 0 || vaddr.pml3_index > 7 { return Err(MapError::OutOfRange); }
                 
-            }
         } else {
             panic!() // attempting to map incorrect types of addresses
         }

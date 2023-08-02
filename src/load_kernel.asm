@@ -4,7 +4,9 @@ read_disk_param:
     mov ah, 0x08 ; get disk parameters
     mov dl, 0x80 ; drive number
     int 0x13
-    ; last logical head number is 15, just for debugging
+    ; last logical head index is 15, just for debugging
+    ; last logical sector index: 63
+    ; last logical cylinder index: 0
 
 load_kernel:
     mov ah, 0x02 ; read disk

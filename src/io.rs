@@ -1,7 +1,7 @@
 use core::{ptr::write_volatile, convert::TryInto};
 
 
-
+#[deprecated]
 #[allow(non_camel_case_types)]
 pub struct display{
     pub vga_buffer: *mut u8,

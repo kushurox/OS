@@ -5,48 +5,43 @@
 #![feature(int_roundings)]
 
 
-use core::{panic::PanicInfo, ptr::{null, read_volatile}};
-use io::DISP;
+use core::{panic::PanicInfo, ptr::read_volatile};
 use paging::{Mapper, VirtualAddress, AddressType::{VirtualAddress as VA_t, PhysicalAddress as PA_t}};
+use vga::Vga;
 
-use crate::interrupts::{check_apic, get_msr_val};
+use crate::{interrupts::{check_apic, get_msr_val}, ata::read_chs, core::arch::asm};
 
 
-mod io;
 mod regs;
 mod interrupts;
 mod paging;
-
+mod ata;
+mod vga;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     // let msg = _info.message().unwrap().as_str().unwrap(); need a second stage loader to make this work
-    unsafe {
-        DISP.color_scheme = 0x0C;
-        // DISP.clrscr();
-        DISP.print("\nPanic :(")
-    }
+    let mut display = Vga::new();
+    display.print_string("panic :(");
     loop {}
 }
 
-pub fn temp_panic(msg: &'static str) -> !{ // second stage loader needed for actual panic, hence using this
-    unsafe{print!("Panic occured:", msg);};
+pub fn temp_panic(_msg: &'static str) -> !{ // second stage loader needed for actual panic, hence using this
+    let mut display = Vga::new();
+    display.print_string("panic temp! :(");
     loop {};
 }
 
 #[no_mangle]
 pub extern "C" fn kmain() -> ! {
-    let pm = Mapper::default();
-    check_apic();
-    unsafe {
-        DISP.clrscr();
-        // DISP.print_hex(read_volatile(0x1000 as *const u64));print!("\n");
-        if let PA_t(addr) = pm.resolve(VA_t(VirtualAddress::new(0x7c00))){
-            DISP.print_hex(addr as u64);
-        }
-
+    let mut display = Vga::new();
+    display.clrscr();
+    unsafe{
+        read_chs(0x9200 as *const u64, 0x0000000000A0340C);
+        let d = read_volatile(0x9200 as *mut u64);
+        display.print_hex(d);
+        
     }
 
     loop {}
 }
-

@@ -28,6 +28,9 @@ IDT:
     .Length       dw 0
     .Base         dd 0
 
+%include "src/ata.asm"
+
+
 [bits 64]
 LongMode:
     mov ax, 0x0
