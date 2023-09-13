@@ -5,7 +5,7 @@
 #![feature(int_roundings)]
 
 
-use core::{panic::PanicInfo, ptr::read_volatile};
+use core::{panic::PanicInfo, ptr::{read_volatile, write_volatile}};
 use paging::{Mapper, VirtualAddress, AddressType::{VirtualAddress as VA_t, PhysicalAddress as PA_t}};
 use vga::Vga;
 
@@ -38,9 +38,9 @@ pub extern "C" fn kmain() -> ! {
     display.clrscr();
     unsafe{
         read_chs(0x9200 as *const u64, 0x0000000000A0340C);
-        let d = read_volatile(0x9200 as *mut u64);
-        display.print_hex(d);
-        
+        write_volatile(0x9200 as *mut u64, 0x69420);
+        display.print_string("In Long mode (64-bit)\nFirst stage loader: [0x7e00-0x9200]\nID Mapped 0x000000-0x200000\nVGA Address:");
+        display.print_hex(display.vga_address as u64);
     }
 
     loop {}

@@ -19,6 +19,7 @@ global read_chs
 ; dest in rdi (helps with insw)
 
 read_chs:
+    pushall
     xor rax, rax
     mov dx, ATA_DRIVE_HEAD_PORT
     mov rax, rsi
@@ -92,4 +93,5 @@ drive_ready:
     rep insw
 
     mov rax, 0
+    popall
     ret

@@ -52,6 +52,7 @@ impl Vga{
 
 
     pub fn print_hex(&mut self, mut d: u64) {
+        self.color = 0x0E;
         let mut chars = [0u16; 16];
         for i in 0..16{
             let temp = (d & 0xF) as u16;
@@ -67,6 +68,7 @@ impl Vga{
         for ch in chars {
             self.putch(ch);
         }
+        self.color = 0x0A;
 
     }
 }

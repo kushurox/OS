@@ -1,3 +1,19 @@
+%macro pushall 0
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rdi
+    push rsi
+%endmacro
+%macro popall 0
+    pop rsi
+    pop rdi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+%endmacro
 section .bootsector
 
 [bits 16]
