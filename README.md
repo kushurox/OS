@@ -19,3 +19,6 @@ make sure to pay attention to the flags provided when using Qemu (refer to Qemu 
 
 
 <h4>I think I have commented on the code and provided the references appropriately. If I have missed anything, please let me know. Thank you!</h4>
+
+## Cool ScreenShot
+![welcome](https://github.com/kushurox/OS/assets/38589424/82fea91b-d527-49a2-a4ce-c1112fc30767)
