@@ -22,3 +22,6 @@ make sure to pay attention to the flags provided when using Qemu (refer to Qemu 
 
 ## Cool ScreenShot
 ![welcome](https://github.com/kushurox/OS/assets/38589424/82fea91b-d527-49a2-a4ce-c1112fc30767)
+
+
+## Status: Hiatus (Yeah ik I updated this a bit too late). Will resume this once I complete micrograd_rust
